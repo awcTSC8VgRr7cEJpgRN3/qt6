@@ -1,64 +1,59 @@
 /*
     QStringView
     https://doc.qt.io/qt-5/qstringview.html#details
-
     A QStringView references a contiguous portion of a UTF-16 string it does not own.
     It acts as an interface type to all kinds of UTF-16 string, without the
     need to construct a QString first.
-
     Why: Its faster than copying a QString, and its read only!
  */
 
-
 #include <QCoreApplication>
+//#include <QString>
+//#include <QStringView>
+//#include <QDebug>
+#include <QRegularExpression>
 
-void readname(QString &name) //address of is access of
+void readString(QString str)
 {
-    name.insert(0,"Mr.");
-    qInfo() << "Changed" << name;
+    str.insert(0, "String: ");
+    qInfo() << str << str.data();
 }
 
-void readonly(QStringView name)
+void readOnlyString(const QString& str)
 {
-    qInfo() << "name" << name.data() << name;
+    qInfo() << str << str.data();
+}
+
+void readStringView(QStringView str)
+{
+    qInfo() << str << str.data();
 }
 
 int main(int argc, char *argv[])
 {
-    QCoreApplication a(argc, argv);
+    //QCoreApplication a(argc, argv);
 
-    QString firstname = "Bryan";
-    QString lastname = "Cairns";
+    //return a.exec();
 
-    //--- Copy and modification issues
-    //readname(firstname);
-    qInfo() << "Original" << firstname;
-
-    //---Read only, no copy
-    qInfo() << "name" << firstname.data() << firstname;
-    readonly(firstname);
-
-    //--- Basic parsing
-
-    QString fullname = firstname + " " + lastname;
-
-    foreach(QStringView part, QStringView(fullname).split(QChar(' ')))
+    char charHead = 'A';
+    char charTail = 'Z';
+    QString str;
+    str.reserve(charTail - charHead);
+    for (char c = charHead; c <= charTail; c++) // C++
     {
-        qInfo() << "part" << part;
-        //Data types can get a bit annoying
-        if(part.startsWith(QStringView(firstname),Qt::CaseInsensitive))
-        {
-            qInfo() << "~First name detected~";
-            readonly(QStringView(firstname).mid(1,3));
-        }
+        str += QChar(c);
     }
 
+    //---Read only, no copy
+    readString(str);
+    readOnlyString(str);
+    readStringView(str);
+    qInfo() << "Original" << str << str.data();
 
-
-
-
-
-
-
-    return a.exec();
+    //--- Basic parsing
+    foreach (QStringView part, QStringView(str).split(QRegularExpression("[AEIOUaeiou]"), Qt::SkipEmptyParts))
+    {
+        //readStringView(part.mid(0, 1));
+        readStringView(part.sliced(0, 1));
+    }
 }

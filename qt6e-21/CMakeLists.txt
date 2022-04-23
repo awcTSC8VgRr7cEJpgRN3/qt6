@@ -16,7 +16,7 @@ find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core REQUIRED)
 
 add_executable(qt6e-21
   main.cpp
-  worker.cpp
   worker.h
+  worker.cpp
 )
 target_link_libraries(qt6e-21 Qt${QT_VERSION_MAJOR}::Core)

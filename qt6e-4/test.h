@@ -2,19 +2,18 @@
 #define TEST_H
 
 #include <QObject>
-#include <QDebug>
 
 class Test : public QObject
 {
     Q_OBJECT
 public:
     explicit Test(QObject *parent = nullptr);
-
-signals:
-    void close();
+    void dostuff(); // It doesn't matter if it's slot or not
 
 public slots:
-    void dostuff();
+
+signals:
+    void doany();
 
 };
 

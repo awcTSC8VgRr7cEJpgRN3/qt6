@@ -1,20 +1,18 @@
 /*
      What
      Getting information about the storage devices
-
      Why
      Its the foundation of the file system
-
      Example
      QStorageInfo
  */
 
 #include <QCoreApplication>
-#include <QList>
 #include <QStorageInfo>
+#include <QList>
 
 //--- Storage Details
-void display(QStorageInfo &storage, QString title)
+void display(const QStorageInfo& storage, const QString& title)
 {
     qInfo() << "---" << title << "---------";
     qInfo() << "Name:" << storage.name();
@@ -33,18 +31,18 @@ void display(QStorageInfo &storage, QString title)
 
 int main(int argc, char *argv[])
 {
-    QCoreApplication a(argc, argv);
+    //QCoreApplication a(argc, argv);
+
+    //return a.exec();
 
     //--- Getting the root ( / or C:\)
     QStorageInfo root = QStorageInfo::root();
-    display(root,"Root");
+    display(root, "Root");
 
     //--- Mounted Devices
     QList<QStorageInfo> devices = QStorageInfo::mountedVolumes();
-    foreach(QStorageInfo device, devices)
+    foreach (QStorageInfo device, devices)
     {
-        display(device,device.name());
+        display(device, device.name());
     }
-
-    return a.exec();
 }

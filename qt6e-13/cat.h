@@ -3,26 +3,37 @@
 
 #include <QObject>
 #include <QDebug>
+//#include <QMap>
+//#include <QString>
+//#include <QSharedPointer>
 
 class Cat : public QObject
 {
     Q_OBJECT
-public:
-    explicit Cat(QObject *parent = nullptr);
-    ~Cat();
-
-    QString name() const;
-    void setName(const QString &name);
-
-    int age() const;
-    void setAge(int age);
-
-signals:
 
 private:
-    QString m_name;
-    int m_age;
+    QString name_;
+    int age_;
+    void constructMessage() const;
+public:
+    explicit Cat(QObject *parent = nullptr);
+    Cat(const QString&, int);
+    ~Cat();
+    void setName(const QString&);
+    void setAge(int);
+    QString getName() const;
+    int getAge() const;
+signals:
 
 };
+
+//class CatMap : public QMap<QString, QSharedPointer<Cat>>
+//{
+//public:
+//    void insert(const QString&, Cat*);
+//};
+
+//--- Displaying a QMap
+QDebug operator<<(QDebug, QSharedPointer<Cat>);
 
 #endif // CAT_H

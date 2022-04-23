@@ -2,7 +2,6 @@
 #define TEST_H
 
 #include <QObject>
-#include <QDebug>
 
 class Test : public QObject
 {

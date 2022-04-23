@@ -1,133 +1,78 @@
 /*
-
   QMap
   key and value pairs
  */
 
 #include <QCoreApplication>
-#include <QSharedPointer>
-#include <QRandomGenerator>
-#include <QMap>
+#include <QRandomGenerator64> // ???
+//#include <QMap>
+//#include <QDebug>
+//#include <QSharedPointer>
 #include "cat.h"
 
-//--- Creating a QMap
-typedef QMap<QString,QSharedPointer<Cat>> catMap;
-
-catMap getCats()
-{
-    catMap cats;
-
-    for(int i = 0; i < 5; i++)
-    {
-        QSharedPointer<Cat> ptr(new Cat());
-        ptr->setAge(QRandomGenerator::global()->bounded(1,5));
-        ptr->setName("Unknown");
-        cats.insert("pet" + QString::number(i), ptr);
-
-    }
-
-    return cats;
-}
-
-//--- Displaying a QMap
-void display(catMap &cats)
-{
-    foreach(QString key, cats.keys())
-    {
-        QSharedPointer<Cat> ptr = cats.value(key);
-        qInfo() << key << ptr->name() << ptr->age() << ptr.data();
-    }
-}
-
-//--- Modifying an item
-void modifyCat(catMap &cats,QString key)
-{
-    if(cats.contains(key))
-    {
-        qInfo() << "Modifying:" << key;
-        cats[key]->setAge(99);
-        cats[key]->setName("Fluffy");
-        display(cats);
-    }
-}
+#define SmartCat QSharedPointer<Cat>
+#define SmartCatMap QMap<QString, SmartCat>
 
 //--- Adding and inserting
-void addCat(catMap &cats)
+void addCat(SmartCatMap& cats, const QString& name, int age)
 {
-    qInfo() << "Adding  and inseting";
-    QSharedPointer<Cat> ptr(new Cat());
-    ptr->setAge(1000);
-    ptr->setName("Test Cat");
-    cats.insert("test",ptr);
-    //cats["test"] = ptr;
-    display(cats);
+    QString keyPrefix = "pet";
+    int keySerial;
+    do keySerial = QRandomGenerator::global()->bounded(100, 999);
+    while (cats.contains(keyPrefix + QString::number(keySerial)));
+    SmartCat ptr(new Cat(name, age));
+    //cats[keyPrefix + QString::number(keySerial)] = ptr;
+    cats.insert(keyPrefix + QString::number(keySerial), ptr);
+    //cats.insert("pet" + QString::number(i), new Cat("Unknown", QRandomGenerator::global()->bounded(1, 5)));
 }
 
-//--- Searching for an item
-void findCat(catMap &cats,QString key)
+template <typename Key, typename T>
+Key randomPickMapKey(const QMap<Key, T>& map)
 {
-    qInfo() << "Exists:" << cats.contains(key);
-
-    auto iter = cats.find(key);
-    if(iter != cats.end()) qInfo() << iter.key() << iter.value();
-
-    foreach(QSharedPointer<Cat> value, cats.values())
+    typename QMap<Key, T>::key_iterator iterator = map.keyBegin();
+    for (int i = 0; i < QRandomGenerator::global()->bounded(map.size()); ++i)
     {
-        qInfo() << value;
+        ++iterator;
     }
-
-    foreach(QString key, cats.keys())
-    {
-        qInfo() << "Key:" << key << "Value:" << cats.value(key);
-    }
+    return *iterator;
 }
 
-//--- Removing an item
-void removeCat(catMap &cats,QString key)
+//--- Creating a QMap
+SmartCatMap getCatMap()
 {
-    if(!cats.contains(key))
+    SmartCatMap cats;
+    for (int i = 0; i < 5; ++i)
     {
-        qWarning() << "Cat not found";
-        return;
+        //SmartCat ptr(new Cat());
+        //ptr->setName("Unknown");
+        //ptr->setAge(QRandomGenerator::global()->bounded(1, 5));
+        addCat(cats, "Unknown", QRandomGenerator::global()->bounded(1, 5));
     }
-
-    cats.remove(key);
-    display(cats);
+    return cats;
 }
 
 int main(int argc, char *argv[])
 {
-    QCoreApplication a(argc, argv);
+    //QCoreApplication a(argc, argv);
 
-    //--- Intro
-    QMap<QString,double> lucky;
-    lucky.insert(QString("Bryan"),22.5);
-    qInfo() << lucky;
-    qInfo() << "My Lucky Number:" << lucky["Bryan"];
+    //return a.exec();
 
-    //--- Creating a QMap
-    catMap cats = getCats();
-    //qInfo() << cats;
+    qInfo() << "Create cats";
+    SmartCatMap cats = getCatMap();
+    qInfo() << cats;
 
-    //--- Displaying a QMap
-    display(cats);
-
-    //--- Modifying an item
-    modifyCat(cats,"pet2");
-
-    //--- Adding and inserting
-    addCat(cats);
-    //addCat(cats);
-
-    //--- Searching for an item
-    findCat(cats,"test");
+    // Pick 'n' Mod
+    qInfo() << "Randomly pick a cat and modify";
+    QString key = randomPickMapKey(cats);
+    cats[key]->setName("Fluffy");
+    cats[key]->setAge(99);
+    qInfo() << cats;
 
     //--- Removing an item
-    removeCat(cats,"test");
-
-    //--- Cleanup
-    qInfo() << "Clearing";
-    cats.clear();
-
-    return a.exec();
+    qInfo() << "Randomly remove cats iteratively";
+    while (!cats.isEmpty())
+    {
+        cats.remove(randomPickMapKey(cats));
+        qInfo() << cats;
+    }
 }

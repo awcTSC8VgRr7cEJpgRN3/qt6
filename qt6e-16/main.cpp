@@ -1,21 +1,16 @@
 /*
-
     Determining the OS
-
     At Compile Time
     Q_OS_WIN
     Q_OS_MACOS
     Q_OS_LINUX
     https://doc.qt.io/qt-6/qtglobal.html
-
     At Run Time
     QSystemInfo
     https://doc.qt.io/qt-6/qsysinfo.html
-
-
 */
 
-#include <QCoreApplication>
+//#include <QCoreApplication>
 #include <QDebug>
 #include <QSysInfo>
 
@@ -32,11 +27,11 @@ void compileTime()
 #ifdef Q_OS_WIN
     qDebug() << "This is Windows";
 
-#ifdef #Q_OS_WIN32
+#ifdef Q_OS_WIN32
     qDebug() << "This is Windows 32 bit";
 #endif
 
-#ifdef #Q_OS_WIN64
+#ifdef Q_OS_WIN64
     qDebug() << "This is Windows 64 bit";
 #endif
 #endif
@@ -53,19 +48,17 @@ void runTime()
     qInfo() << "currentCpuArchitecture:" <<  info.currentCpuArchitecture();
     qInfo() << "buildCpuArchitecture:" <<  info.buildCpuArchitecture();
     qInfo() << "buildAbi:" <<  info.buildAbi();
-
 }
 
 int main(int argc, char *argv[])
 {
-    QCoreApplication a(argc, argv);
+    //QCoreApplication a(argc, argv);
+
+    //return a.exec();
 
     //--- At Compile time
     compileTime();
 
-
     //--- At Run time
     runTime();
-
-    return a.exec();
 }

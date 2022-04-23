@@ -1,22 +1,29 @@
+#include <QDebug>
+#include <QThread>
 #include "worker.h"
 
-Worker::Worker(QObject *parent) : QObject(parent)
+Worker::Worker(QObject *parent)
+    : QObject{parent}
 {
-    qInfo() << this << "Constructed" << QThread::currentThread();
+    qInfo() << this << "constructed" << QThread::currentThread();
 }
 
 Worker::~Worker()
 {
-    qInfo() << this << "Deconstructed" << QThread::currentThread();
+    qInfo() << this << "deconstructed" << QThread::currentThread();
 }
 
-void Worker::run()
+void Worker::run_aesthetic_fatigue_tempo()
 {
-    for(int i = 0; i < 10; i++)
+    int i = 1;
+    int interval = 1000;
+    while (interval > 10)
     {
-        qInfo() << "Working" << QString::number(i) << QThread::currentThread();
-        QThread::currentThread()->msleep(500);
+        qInfo() << QThread::currentThread() << "Shitty Trance Tempo" << QString::number(i);
+        QThread::currentThread()->msleep(interval);
+        i %= 8;
+        if (!i) interval /= 2;
+        ++i;
     }
-
-    this->deleteLater();
+    this->deleteLater(); // No parent kills, suicide please.
 }

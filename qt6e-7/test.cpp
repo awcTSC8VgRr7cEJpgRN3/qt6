@@ -1,11 +1,14 @@
+#include <QDebug>
 #include "test.h"
 
-Test::Test(QObject *parent) : QObject(parent)
+Test::Test(QObject *parent)
+    : QObject{parent}
 {
-    qInfo() << this << "Constructed" << parent;
+    //qInfo() << this << "constructed" << this->parent();
+    qInfo() << this << "constructed" << parent;
 }
 
 Test::~Test()
 {
-    qInfo() << this << "Deconstructed" << parent();
+    qInfo() << this << "deconstructed" << this->parent();
 }

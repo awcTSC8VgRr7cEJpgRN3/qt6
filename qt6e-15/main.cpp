@@ -1,31 +1,21 @@
 /*
  Intercepting QDebug
-
  https://doc-snapshots.qt.io/qt6-dev/qtglobal.html
-
  Message types
  https://doc-snapshots.qt.io/qt6-dev/qtglobal.html#QtMsgType-enum
-
  QtMessageHandler is a typedef
  https://doc-snapshots.qt.io/qt6-dev/qtglobal.html#QtMessageHandler-typedef
-
  qInstallMessageHandler installs the handler
  https://doc-snapshots.qt.io/qt6-dev/qtglobal.html#qInstallMessageHandler
-
  */
 
 #include <QCoreApplication>
-#include <QDebug>
-#include <QTextStream>
-#include <iostream>
+//#include <QDebug>
+//#include <QTextStream>
 #include "kitten.h"
-
-using namespace std;
 
 void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
-    //Because we can intercept this from anywhere in the app, we can log to a file, or the system log
-
     QByteArray localMsg = msg.toLocal8Bit();
     const char *file = context.file ? context.file : "";
     const char *function = context.function ? context.function : "";
@@ -48,31 +38,40 @@ void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QS
     }
 }
 
-void test()
+void test(Kitten& kitty)
 {
-    qDebug() << "test";
-    qInfo() << "test";
-    qWarning() << "test";
-    qCritical() << "test";
-    qFatal("fatal message");
+    kitty.run();
 
-    Kitten kitty;
-    kitty.meow();
+    qDebug("Debug message.");
+    qInfo("Info message.");
+
+    qWarning() << "Warning message.";
+    qCritical() << "Critical message.";
 }
 
+void testFatal(Kitten& kitty)
+{
+    kitty.meow();
+
+    qFatal("Fatal message.");
+}
 
 int main(int argc, char *argv[])
 {
-    QCoreApplication a(argc, argv);
+    //QCoreApplication a(argc, argv);
+
+    //return a.exec();
 
     //--- Setup (and copy the code)
     QTextStream qin(stdin);
-    cout << "Starting" << endl;
+    QTextStream qout(stdout);
+    qout << "Starting" << Qt::endl;
 
+    Kitten mochi;
     bool running = true;
     do
     {
-        cout << "Enter a command (start, stop, test, or exit)" << endl;
+        qout << "Enter a command (start, stop, test, testfatal, or exit)" << Qt::endl;
         QString command = qin.readLine();
         qInfo() << "You entered:" << command;
 
@@ -80,18 +79,18 @@ int main(int argc, char *argv[])
         if(command.toUpper() == "START") qInstallMessageHandler(myMessageOutput);
 
         //--- Uninstall
-        if(command.toUpper() == "STOP") qInstallMessageHandler(0);
+        else if(command.toUpper() == "STOP") qInstallMessageHandler(0);
 
         //--- Test
-        if(command.toUpper() == "TEST") test();
+        else if(command.toUpper() == "TEST") test(mochi);
+        else if(command.toUpper() == "TESTFATAL") testFatal(mochi);
 
         //--- Exit the loop
-        if(command.toUpper() == "EXIT") running = false;
+        else if(command.toUpper() == "EXIT") running = false;
 
-    }while (running);
+        else qWarning() << "Excuse me, sir. What da invalid comando.";
+    }
+    while (running);
 
-
-    cout << "Finished" << endl;
-
-    return a.exec();
+    qout << "Finished" << Qt::endl;
 }

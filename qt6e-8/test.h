@@ -2,7 +2,7 @@
 #define TEST_H
 
 #include <QObject>
-#include <QDebug>
+//#include <QString>
 
 class Test : public QObject
 {
@@ -10,9 +10,7 @@ class Test : public QObject
 public:
     explicit Test(QObject *parent = nullptr);
     ~Test();
-
-    void message(QString value = "");
-
+    void message(QString str);
 signals:
 
 };

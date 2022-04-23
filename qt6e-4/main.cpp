@@ -1,7 +1,6 @@
 #include <QCoreApplication>
-
-#include "test.h"
-#include <QDebug>
+//#include <QDebug>
+#include <test.h>
 
 int main(int argc, char *argv[])
 {
@@ -9,8 +8,10 @@ int main(int argc, char *argv[])
 
     Test test;
 
-    //Connect the signal and the slot
-    QObject::connect(&test,&Test::close,&a,&QCoreApplication::quit,Qt::QueuedConnection);
+    // Connect the signal and the slot.
+    //QObject::connect(&test, &Test::doany, &a, &QCoreApplication::quit, Qt::QueuedConnection);
+    test.connect(&test, &Test::doany, &a, &QCoreApplication::quit, Qt::QueuedConnection);
+    test.connect(&test, SIGNAL(doany()), &a, SLOT(quit()), Qt::QueuedConnection);
 
     test.dostuff();
 

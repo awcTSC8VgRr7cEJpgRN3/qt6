@@ -16,7 +16,7 @@ find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core REQUIRED)
 
 add_executable(qt6e-15
   main.cpp
-  kitten.cpp
   kitten.h
+  kitten.cpp
 )
 target_link_libraries(qt6e-15 Qt${QT_VERSION_MAJOR}::Core)

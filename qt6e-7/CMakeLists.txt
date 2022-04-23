@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.14)
 
-project(qt6-ep-7 LANGUAGES CXX)
+project(qt6e-7 LANGUAGES CXX)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -14,9 +14,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core REQUIRED)
 
-add_executable(qt6-ep-7
+add_executable(qt6e-7
   main.cpp
   test.h
   test.cpp
 )
-target_link_libraries(qt6-ep-7 Qt${QT_VERSION_MAJOR}::Core)
+target_link_libraries(qt6e-7 Qt${QT_VERSION_MAJOR}::Core)

@@ -1,87 +1,77 @@
-/*
-  QString - Qts String class
-  Also touch on QChar
-
-  https://doc.qt.io/qt-5/qstring.html
-
-  Escape sequences
-  https://en.cppreference.com/w/cpp/language/escape
-*/
-
 #include <QCoreApplication>
+//#include <QDebug>
+//#include <QStringList>
+//#include <QString>
+//#include <QChar>
 #include <iostream>
 
-void test(QString data)
+// --------------------------- Maybe it's best to use the same template --------------------------- //
+
+void printEachChar(QString str) // QString is not QObject and can be copied, but no copy due to Implicit Sharing in fact.
 {
-    qInfo() << data;
+    qInfo() << "Reading each char:";
+    foreach (QChar c, str)
+    {
+        qInfo() << c;
+    }
 }
+
+void printStringList(QStringList list) // QStringList is not QObject and can be copied, but no copy due to Implicit Sharing in fact.
+{
+    qInfo() << "Reading string list:";
+    foreach (QString str, list)
+    {
+        qInfo() << str.trimmed();
+    }
+}
+
+// --------------------------- Maybe it's best to use the same template --------------------------- //
 
 int main(int argc, char *argv[])
 {
-    QCoreApplication a(argc, argv);
+    //QCoreApplication a(argc, argv);
 
-    //--- Creating ---
-    QString line("Hello World");
-    qInfo() << line;
+    //return a.exec();
 
-    QString name;
-    name = "Bryan Cairns";
-    qInfo() << name;
+    QString hello("Hello World."); // QString::QString(const char *str)
+    qInfo() << hello;
+    hello = "Hell World?"; // QString &QString::operator=(const char *str)
+    qInfo() << hello;
+    hello = QString("Hello World!"); // QString &QString::operator=(const QString &other)
+    qInfo() << hello;
 
-    int pos = 504;
-    int max = 7439;
-    QString status = QString("Processing file %1 of %2").arg(pos).arg(max);
-    qInfo() << status;
+    qInfo() << "Compare" << hello.compare("hello world!", Qt::CaseSensitivity::CaseInsensitive);
+    qInfo() << "Starts" << hello.startsWith("hello", Qt::CaseInsensitive);
+    qInfo() << "Ends" << hello.endsWith("world!", Qt::CaseSensitivity::CaseSensitive);
+    qInfo() << "Contains" << hello.contains("hell", Qt::CaseSensitive);
+    qInfo() << "Index" << hello.indexOf('l');
 
+    printEachChar(hello);
 
-    //--- Reading each char ---
-    for(int i = 0; i < line.length(); i++)
-    {
-        QChar c = line.at(i);
-        qInfo() << c;
-    }
+    int pos = 99;
+    int max = 100;
+    hello.append(QString("\r\nProcessing file %1 of %2.").arg(pos).arg(max));
+    qInfo() << "Escape" << hello;
 
-    //--- Comparing and searching ---
-    qInfo() << "Compare" << line.compare("hello world",Qt::CaseSensitivity::CaseSensitive);
-    qInfo() << "Starts" << line.startsWith("hello",Qt::CaseInsensitive);
-    qInfo() << "Ends" << line.endsWith("world",Qt::CaseInsensitive);
-    qInfo() << "Contains" << line.contains("world");
-    qInfo() << "Index" << line.indexOf("World");
+    hello += "\r\n<i>Warning: </i>99% processing forever.<br>"; // QString &QString::operator+=(const char *str)
+    qInfo() << "Html" << hello.toHtmlEscaped();
 
-    //--- Modifying and parsing ---
-    line.append("\r\nHow are you?");
-    qInfo() << "Escape" << line;
+    hello.replace("World", "ザ・ワールド");
+    qInfo() << "Replaced" << hello;
 
-    line.append("\r\n<i>This</i>is HTML<br>");
-    qInfo() << "Html" << line.toHtmlEscaped();
+    qInfo() << "Upper" << hello.toUpper();
+    qInfo() << "Lower" << hello.toLower();
+    qInfo() << "Mid" << hello.mid(6, 7);
 
-    line.replace("?","!");
-    qInfo() << "Replaced" <<  line;
+    QStringList list = hello.split("\n");
+    printStringList(list);
 
-    qInfo() << "Upper" <<  line.toUpper();
-    qInfo() << "Lower" <<  line.toLower();
-    qInfo() << "Mid" <<  line.mid(3,5);
+    std::cout << "std" << std::endl << hello.toStdString() << std::endl;
 
-    QStringList list = line.split("\n");
-    foreach(QString item, list)
-    {
-        qInfo() << "item" << item.trimmed();
-    }
+    qInfo() << "UTF-8" << hello.toUtf8();
+    qInfo() << "UTF-8 hex" << hello.toUtf8().toHex();
+    qInfo() << "Base64" << hello.toUtf8().toBase64();
+    qInfo() << "Base64 hex" << hello.toUtf8().toBase64().toHex();
 
-    //--- Conversion ---
-    std::cout << "std " << line.toStdString() << std::endl;
-
-    qInfo() << "UTF8" << line.toUtf8();
-    qInfo() << "Base64" << line.toUtf8().toBase64();
-    qInfo() << "Hex" << line.toUtf8().toHex();
-
-
-    //--- Not a QObject ---
-    test(line);
-
-
-
-
-
-    return a.exec();
+    //return 0;
 }

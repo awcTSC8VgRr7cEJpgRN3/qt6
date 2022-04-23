@@ -1,116 +1,127 @@
 /*
-
   QByteArray
-  Best array ever
-
+  Best array ever :)
  */
 
+#include <typeinfo>
 #include <QCoreApplication>
+//#include <QString>
+//#include <QByteArray>
+//#include <QDebug>
 
-void stats(QByteArray &data)
+void stats(const QByteArray& data)
 {
-     qInfo() << "Length" << data.length() << "Capacity" << data.capacity();
-     qInfo() << data;
+    qInfo() << &data << data;
+    qInfo() << "Size" << data.size() << "Capacity" << data.capacity();
 }
 
 int main(int argc, char *argv[])
 {
-    QCoreApplication a(argc, argv);
+    //QCoreApplication a(argc, argv);
+
+    //return a.exec();
 
     //--- Creating an array ---
-    QByteArray stuff;
-    qInfo() << stuff;
+    qInfo() << "Empty constructor";
+    QByteArray data;
+    stats(data);
 
-    QByteArray data("Hello");
-    qInfo() << data;
+    qInfo() << "8bit style constructor";
+    data = QByteArray(QString("Hello").toLocal8Bit());
+    stats(data);
 
-    QByteArray buffer(10,'\t');
-    qInfo() << buffer;
+    qInfo() << "Fill constructor";
+    QByteArray buffer = QByteArray(4, '\x20');
+    stats(buffer);
 
-    QByteArray person(QString("Bryan").toLocal8Bit());
-    qInfo() << person;
+    qInfo() << "Char pointer constructor";
+    data = QByteArray("Hello", 4);
+    stats(data);
 
     //--- Sizing the array ---
-    data.reserve(25);
-    stats(data);
+    qInfo() << "Reserve buffer to 7 bytes";
+    buffer.reserve(7);
+    stats(buffer);
 
-    data.resize(10);
-    stats(data);
+    qInfo() << "Resize buffer to 11 bytes";
+    buffer.resize(11);
+    stats(buffer);
 
-    data.truncate(8);
-    stats(data);
+    qInfo() << "Truncate buffer to 8 bytes";
+    buffer.truncate(8);
+    stats(buffer);
 
-    data.clear();
-    stats(data);
+    qInfo() << "Re-resize buffer to 11 bytes";
+    buffer.resize(11);
+    stats(buffer);
+
+    qInfo() << "Clear buffer";
+    buffer.clear();
+    stats(buffer);
 
     //--- Modifying the data ---
-    data.resize(5);
-    data.fill('\x02');
+    qInfo() << "Fill 4 spaces to buffer";
+    buffer.fill('\x20', 4);
+    stats(buffer);
+
+    qInfo() << "Append 5 chars to data";
+    data.append("World");
     stats(data);
 
-    data.replace(0,99,QByteArray("Sweet"));
+    qInfo() << "Insert a space to data";
+    data.insert(4, "\x20");
     stats(data);
 
-    data.fill('*');
-    data.insert(3,QByteArray("Hello World"));
+    qInfo() << "Replace Hell to wonderful";
+    data.replace(0, 4, "Hello");
     stats(data);
 
-    data.append('!');
-    stats(data);
-
-    data.remove(0,3);
+    qInfo() << "Remove 6 chars of data";
+    data.remove(5, 6);
     stats(data);
 
     //--- Reading the data ---
+    qInfo() << "Hell is like a shadow";
+    int first = data.indexOf("H");
+    int last = data.lastIndexOf("l");
+    qInfo() << data.mid(first, (last - first + 1));
 
-    int first = data.indexOf('*');
-    int last = data.lastIndexOf('*');
-    qInfo() << "Start" << first << "End" << last;
-
-    if(first > -1 && last > -1) qInfo() << data.mid(first,(last - first) + 1);
-
-    data.clear();
-    data.append("Bryan Cairns");
-
-    for(int i = 0; i < data.length(); i++)
+    qInfo() << "Iterate each elephant";
+    for(int i = 0; i < data.size(); ++i)
     {
         qInfo() << "At" << data.at(i) << "or" << data[i];
     }
 
+    qInfo() << "Iterate with char";
     foreach(char c, data)
     {
         qInfo() << "Char" << c;
     }
 
+    qInfo() << "Iterate with split";
     foreach(auto item, data.split(' '))
     {
-        qInfo() << "Item" << item;
+        qInfo() << typeid(item).name() << item;
     }
 
     //--- Encoding the data ---
-    qInfo() << "Normal" << data;
-    qInfo() << "Repeat" << data.repeated(3);
+//    qInfo() << "Normal" << data;
+//    qInfo() << "Repeat" << data.repeated(3);
 
-    data.append(QByteArray("\t\r\n"));
-    data.insert(0,QByteArray("          \t\t\t"));
-    qInfo() << "Trimmed" << data.trimmed();
-    qInfo() << "Actual" << data;
-    data = data.trimmed();
-    qInfo() << "Actual" << data;
+//    data.append(QByteArray("\t\r\n"));
+//    data.insert(0,QByteArray("          \t\t\t"));
+//    qInfo() << "Trimmed" << data.trimmed();
+//    qInfo() << "Actual" << data;
+//    data = data.trimmed();
+//    qInfo() << "Actual" << data;
 
-    QByteArray hex = data.toHex();
-    qInfo() << "Hex" << hex;
-    QByteArray from_hex = QByteArray::fromHex(hex);
-    qInfo() << "From Hex" << from_hex;
+//    QByteArray hex = data.toHex();
+//    qInfo() << "Hex" << hex;
+//    QByteArray from_hex = QByteArray::fromHex(hex);
+//    qInfo() << "From Hex" << from_hex;
 
-    QByteArray base64 = data.toBase64();
-    qInfo() << "base64" << base64;
-    QByteArray from_base64 = QByteArray::fromBase64(base64);
-    qInfo() << "From base64" << from_base64;
-
-
-
-
-
-    return a.exec();
+//    QByteArray base64 = data.toBase64();
+//    qInfo() << "base64" << base64;
+//    QByteArray from_base64 = QByteArray::fromBase64(base64);
+//    qInfo() << "From base64" << from_base64;
 }
